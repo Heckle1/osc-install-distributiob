@@ -1,0 +1,26 @@
+
+- name: Download Debian9 iso
+  get_url:
+    url: http://cdimage.debian.org/cdimage/openstack/current/debian-9.4.6-20180609-openstack-amd64.raw
+    dest: /tmp/debian9.raw
+    mode: 0440
+#    checksum: sha256:b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+
+- name: Copy iso to disk with dd
+  become: yes
+  command: dd if=/tmp/debian9.raw of=/dev/xvdz bs=16k
+
+- name: Mount futur root device volume to /mnt/
+  become: yes
+  mount:
+    path: /mnt
+    src: /dev/xvdz1
+    state: mounted
+    fstype: ext4
+
+
+- name: Configure cloud-init datasource as EC2
+  become: yes
+  copy: src='90_dpkg.cfg' dest='/mnt/etc/cloud/cloud.cfg.d/90_dpkg.cfg'
+  force: yes
+

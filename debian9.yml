@@ -1,0 +1,6 @@
+---
+- name: Setup debian9 root device volume
+  hosts: all
+  roles:
+    - debian9
+
